@@ -2,8 +2,8 @@ NAME = PathFinder
 
 FLAG = -std=c++1y -Wall -Werror -Wextra
 
-${NAME} : main.cpp
-	g++ -o ${NAME} ${FLAG} main.cpp
+${NAME} : src/main.cpp
+	g++ -o ${NAME} ${FLAG} src/main.cpp -I inc
 
 all : ${NAME} maze
 

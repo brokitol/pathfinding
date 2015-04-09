@@ -5,7 +5,7 @@ FLAG = -std=c++1y -Wall -Werror -Wextra
 ${NAME} : src/main.cpp
 	g++ -o ${NAME} ${FLAG} src/main.cpp -I inc
 
-all : ${NAME} maze
+all : ${NAME}
 
 clean:
 

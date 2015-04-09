@@ -12,6 +12,7 @@ struct coordonnee
 	unsigned int z = 0;
 
 	coordonnee(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0): x(x), y(y), z(z) {};
+	bool	operator==(const coordonnee & val) {return (this->x == val.x && this->y == val.y) ? true : false;}
 };
 
 typedef std::vector< std::vector< bool > > labi2D;
@@ -25,7 +26,7 @@ class API
 {
 	public :
 		virtual ~API() {};
-		virtual std::vector<coordonnee>		get_path(coordonnee depart, coordonnee objectif) = 0;
+		virtual std::list<coordonnee>		get_path(coordonnee depart, coordonnee objectif) = 0;
 };
 
 extern "C"

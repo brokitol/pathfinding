@@ -11,9 +11,9 @@ laby1.maze
 
 
 compiler votre libraire :
-> make lib NOM=nom_resultat SRC_DIR=chemin_vers_vos_sources INC_DIR=chemin_vers_vos_includes
+> make lib NOM=nom_resultat DIR=chemin
 
 exemple :
-> make lib NOM=lib_test SRC_DIR=lib_test_src INC_DIR=lib_test_include
+> make lib NOM=lib_test DIR=lib_test
 > ls | grep .so
 lib_test.so 

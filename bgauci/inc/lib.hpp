@@ -11,10 +11,11 @@ class Dijkstra_Simple : public API
 	public :
 		Dijkstra_Simple(labi2D maze);
 		~Dijkstra_Simple();
-		std::vector<coordonnee>		get_path(coordonnee depart, coordonnee objectif);
+		std::list<coordonnee>		get_path(coordonnee depart, coordonnee objectif);
 
 	private :
-		situ 						fonc(const situ actu);
+		std::list<situ> 			fonc(const situ actu, coordonnee objectif);
+		void						aff(std::vector< std::vector< Dijkstra_Simple::option > > map);
 };
 
 struct situ

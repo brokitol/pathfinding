@@ -36,6 +36,7 @@ std::list<coordonnee>		Dijkstra_Simple::get_path(coordonnee depart, coordonnee o
 	try
 	{
 		do {
+			suite.clear();
 			for (auto it : lst)
 				suite.splice(suite.end(), fonc(it, objectif));
 			std::cout << suite.front().path.size() << std::endl;
@@ -56,7 +57,6 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	std::list<situ>	res;
 	coordonnee courante = actu.path.front();
 
-	aff(actu.maze);
 	// sud
 	coordonnee tmp = courante;
 	tmp.y += 1;
@@ -73,10 +73,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 		copy.path.push_front(tmp);
 		res.push_front(copy);
 	}
-	else
-	{
-		//std::cout << "SUD non" << std::endl;
-	}
+
 	// est
 	tmp = courante;
 	tmp.x -= 1;

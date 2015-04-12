@@ -14,6 +14,8 @@ end
 
 @graphe = [] # stocker des pairs [p1,p2]
 class Point
+	attr_reader :y, :x
+
 	@x = 0
 	@y = 0
 
@@ -22,55 +24,51 @@ class Point
 		@y = y
 	end
 
-	def getX
-		return @x
-	end
-
-	def getY
-		return @y
-	end
-
 	def ==(tmp)
-		return true if @x === tmp.getX and @y == tmp.getY
+		return true if @x === tmp.x and @y == tmp.y
 	end
+end
+
+def maj_graphe_and_list(x, y, pos)
+	return if x < 0 || x >= @n || y < 0 || y >= @n || @tab[x][y] == true
+	p = Point.new(x,y)
+	@graphe << [pos,  Point.new(x, y)]
+	@lst << p
 end
 
 def	choix_direction(x, y)
-	return false if x < 0 || x >= @n || y < 0 || y >= @n || @tab[x][y]
-	@tab[x][y] = true
-	ordre = [ :droite, :gauche, :haut, :bas ]
-	ordre.shuffle!
-	ordre.each do |o|
-		p1 = Point.new(x,y)
-		if o == :droite
-			if choix_direction(x - 1, y)
-				@graphe << [p1,  Point.new(x - 1, y)]
+	@lst = []
+	@lst << Point.new(x,y)
+	while (@lst.size > 0)
+		pos = @lst.pop
+		x = pos.x
+		y = pos.y
+		@tab[x][y] = true
+		[:droite, :gauche, :haut, :bas].shuffle!.each do |o|
+			if		o == :droite
+				maj_graphe_and_list(x - 1, y, pos)
+			elsif	o == :gauche
+				maj_graphe_and_list(x + 1, y, pos)
+			elsif	o == :haut
+				maj_graphe_and_list(x, y + 1, pos)
+			elsif	o == :bas
+				maj_graphe_and_list(x, y - 1, pos)
+			#	y += 1
+			#	unless x < 0 || x >= @n || y < 0 || y >= @n || @tab[x][y]
+			#		@graphe << [pos,  Point.new(x, y)]
+			#		@lst << Point.new(x,y)
+			#	end
+			#	y -= 1
 			end
 		end
-		if o == :gauche
-			if choix_direction(x + 1, y)
-				@graphe << [p1,  Point.new(x + 1, y)]
-			end
-		end
-		if o == :haut
-			if choix_direction(x, y - 1)
-				@graphe << [p1,  Point.new(x, y - 1)]
-			end
-		end
-		if o == :bas
-			if choix_direction(x, y + 1)
-				@graphe << [p1,  Point.new(x, y + 1)]
-			end
-		end
-
-		choix_direction(x, y - 1) if o == :haut
-
-		choix_direction(x, y + 1) if o == :bas
 	end
-	return true
 end
- 
+
+puts "debut choix"
 choix_direction(0, 0)
+puts "fin choix : @n * @n = #{@n * @n} | @graphe = #{@graphe.size}"
+
+# extention du tableau
 
 tab_final = []
 @a = @n * 2

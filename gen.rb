@@ -1,7 +1,7 @@
 # generer le tableau
 # definire le point de depart
 
-@n = 50
+@n = 5
 rand = Random.new()
 
 @tab = []
@@ -30,9 +30,11 @@ class Point
 end
 
 def maj_graphe_and_list(x, y, pos)
-	return if x < 0 || x >= @n || y < 0 || y >= @n || @tab[x][y] == true
+	return if x < 0 || x >= @n || y < 0 || y >= @n
+   	return if @tab[x][y] == true
 	p = Point.new(x,y)
 	@graphe << [pos,  Point.new(x, y)]
+	@tab[x][y] = true
 	@lst << p
 end
 
@@ -45,28 +47,32 @@ def	choix_direction(x, y)
 		y = pos.y
 		@tab[x][y] = true
 		[:droite, :gauche, :haut, :bas].shuffle!.each do |o|
-			if		o == :droite
-				maj_graphe_and_list(x - 1, y, pos)
-			elsif	o == :gauche
-				maj_graphe_and_list(x + 1, y, pos)
-			elsif	o == :haut
-				maj_graphe_and_list(x, y + 1, pos)
-			elsif	o == :bas
-				maj_graphe_and_list(x, y - 1, pos)
-			#	y += 1
-			#	unless x < 0 || x >= @n || y < 0 || y >= @n || @tab[x][y]
-			#		@graphe << [pos,  Point.new(x, y)]
-			#		@lst << Point.new(x,y)
-			#	end
-			#	y -= 1
-			end
+			maj_graphe_and_list(x + 1, y, pos)	if		o == :droite
+			maj_graphe_and_list(x - 1, y, pos)	if		o == :gauche
+			maj_graphe_and_list(x, y - 1, pos)	if		o == :haut
+			maj_graphe_and_list(x, y + 1, pos)	if		o == :bas
 		end
 	end
 end
 
 puts "debut choix"
 choix_direction(0, 0)
-puts "fin choix : @n * @n = #{@n * @n} | @graphe = #{@graphe.size}"
+puts "fin choix : @n * @n = #{@n * @n} | @graphe = #{@graphe.size} | toto = #{@toto}"
+
+@graphe.each do |g|
+	puts "idem"	if g[0] == g[1]
+end
+jlsdflns = 0
+@graphe.each do |g|
+	@graphe.each do |h|
+		if (g[0] == h[0] and g[1] == h[1]) or (g[0] == h[1] and g[1] == h[0])
+			jlsdflns += 1
+			puts "doublet"
+		end
+	end
+end
+
+puts jlsdflns
 
 # extention du tableau
 

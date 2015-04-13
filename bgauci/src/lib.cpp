@@ -39,7 +39,6 @@ std::list<coordonnee>		Dijkstra_Simple::get_path(coordonnee depart, coordonnee o
 			suite.clear();
 			for (auto it : lst)
 				suite.splice(suite.end(), fonc(it, objectif));
-			std::cout << suite.front().path.size() << std::endl;
 			lst = suite;
 		} while (suite.size() > 0);
 	}
@@ -90,10 +89,6 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 		copy.path.push_front(tmp);
 		res.push_front(copy);
 	}
-	else
-	{
-		//std::cout << "EST non" << std::endl;
-	}
 	// nord
 	tmp = courante;
 	tmp.y -= 1;
@@ -109,10 +104,6 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 		copy.maze[tmp.x][tmp.y] = FAIT;
 		copy.path.push_front(tmp);
 		res.push_front(copy);
-	}
-	else
-	{
-		//std::cout << "NORD non" << std::endl;
 	}
 	// ouest
 	tmp = courante;

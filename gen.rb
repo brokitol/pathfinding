@@ -1,7 +1,7 @@
 # generer le tableau
 # definire le point de depart
 
-@n = 5
+@n = 500
 rand = Random.new()
 
 @tab = []
@@ -55,24 +55,7 @@ def	choix_direction(x, y)
 	end
 end
 
-puts "debut choix"
 choix_direction(0, 0)
-puts "fin choix : @n * @n = #{@n * @n} | @graphe = #{@graphe.size} | toto = #{@toto}"
-
-@graphe.each do |g|
-	puts "idem"	if g[0] == g[1]
-end
-jlsdflns = 0
-@graphe.each do |g|
-	@graphe.each do |h|
-		if (g[0] == h[0] and g[1] == h[1]) or (g[0] == h[1] and g[1] == h[0])
-			jlsdflns += 1
-			puts "doublet"
-		end
-	end
-end
-
-puts jlsdflns
 
 # extention du tableau
 

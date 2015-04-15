@@ -15,8 +15,10 @@ struct coordonnee
 	bool	operator==(const coordonnee & val) {return (this->x == val.x && this->y == val.y) ? true : false;}
 };
 
+enum Element {LIBRE, MUR, ESCALIER};
+
 typedef std::vector< std::vector< bool > > labi2D;
-typedef std::vector< std::vector< std::vector< bool > > > labi3D;
+typedef std::vector< std::vector< std::vector< Element > > > labi3D;
 
 /*
  * la liste de coordonnee retourner par get_path doit commencer par le point de depart et finir par le point d'objectif.

@@ -63,6 +63,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.path.push_front(tmp);
+		aff(copy.maze);
 		throw copy.path;
 	}
 	if (actu.maze[tmp.x][tmp.y] == LIBRE)
@@ -80,6 +81,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.path.push_front(tmp);
+		aff(copy.maze);
 		throw copy.path;
 	}
 	if (actu.maze[tmp.x][tmp.y] == LIBRE)
@@ -96,6 +98,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.path.push_front(tmp);
+		aff(copy.maze);
 		throw copy.path;
 	}
 	if (actu.maze[tmp.x][tmp.y] == LIBRE)
@@ -112,6 +115,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.path.push_front(tmp);
+		aff(copy.maze);
 		throw copy.path;
 	}
 	if (actu.maze[tmp.x][tmp.y] == LIBRE)
@@ -134,8 +138,10 @@ void	Dijkstra_Simple::aff(std::vector< std::vector< Dijkstra_Simple::option > > 
 			switch (o)
 			{
 				case LIBRE : std::cout << " ";	break;
-				case FAIT : std::cout << ".";	break;
-				case BLOCK : std::cout << "X";	break;
+				case FAIT :
+					std::cout << "\033[1;32mX\033[0;m";
+					break;
+				case BLOCK : std::cout << ".";	break;
 				default : std::cout << "?";
 			}
 		}

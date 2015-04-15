@@ -14,8 +14,8 @@ int main(int argc, char **argv)
 	std::ifstream f;
 	std::srand(time(0));
 
-	if (argc < 3)
-		std::cout << "usage : " << argv[0] << " maze lib {lib}" << std::endl;
+	if (argc < 4)
+		std::cout << "usage : " << argv[0] << " maze nb_test lib {lib}" << std::endl;
 	std::vector< std::vector< bool > > maze;
 
 	f.open (argv[1], std::ifstream::in);
@@ -32,7 +32,8 @@ int main(int argc, char **argv)
 		maze.push_back(tmp);
 	}
 
-	for (int i = 2 ; i < argc ; i++)
+	int	nb_test = atoi(argv[2]);
+	for (int i = 3 ; i < argc ; i++)
 	{
 		void *	hndl = NULL;
 		API *	pathfinder = NULL;
@@ -64,7 +65,7 @@ int main(int argc, char **argv)
 		timeval	avant;
 		timeval	apres;
 		std::list<int> list_res;
-		for (int i = 0; i < 200; i++)
+		for (int i = 0; i < nb_test; i++)
 		{
 			do {
 				x = std::rand() % maze.size();

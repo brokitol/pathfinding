@@ -1,7 +1,7 @@
 # generer le tableau
 # definire le point de depart
 
-@n = 500
+@n = 100
 rand = Random.new()
 
 @tab = []

@@ -3,7 +3,7 @@ NAME = PathFinder
 FLAG = -std=c++1y -Wall -Werror -Wextra
 
 ${NAME} : src/main.cpp
-	g++ -o ${NAME} ${FLAG} src/main.cpp -I inc
+	g++ -o ${NAME} ${FLAG} main_test/src/main.cpp -I main_test/inc
 
 all : ${NAME}
 

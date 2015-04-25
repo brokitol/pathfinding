@@ -51,7 +51,24 @@ std::list<coordonnee>		Dijkstra_Simple::get_path(coordonnee depart, coordonnee o
 	return res;
 }
 
-std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
+void						Dijkstra_Simple::decoupage(const situ *actu, coordonnee const objectif, coordonnee *tmp, std::list<situ> *res)
+{
+	if (*tmp == objectif)
+	{
+		situ copy = *actu;
+		copy.path.push_back(*tmp);
+		aff(copy.maze);
+		throw copy.path;
+	}
+	if (actu->maze[tmp->x][tmp->y] == LIBRE)
+	{
+		situ copy = *actu;
+		copy.maze[tmp->x][tmp->y] = FAIT;
+		copy.path.push_back(*tmp);
+		res->push_front(copy);
+	}
+}
+std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee const objectif)
 {
 	std::list<situ>	res;
 	coordonnee courante = actu.path.back();
@@ -59,72 +76,20 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	// sud
 	coordonnee tmp = courante;
 	tmp.y += 1;
-	if (tmp == objectif)
-	{
-		situ copy = actu;
-		copy.path.push_back(tmp);
-		aff(copy.maze);
-		throw copy.path;
-	}
-	if (actu.maze[tmp.x][tmp.y] == LIBRE)
-	{
-		situ copy = actu;
-		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_back(tmp);
-		res.push_front(copy);
-	}
+	decoupage(&actu, objectif, &tmp, &res);
 
 	// est
 	tmp = courante;
 	tmp.x -= 1;
-	if (tmp == objectif)
-	{
-		situ copy = actu;
-		copy.path.push_back(tmp);
-		aff(copy.maze);
-		throw copy.path;
-	}
-	if (actu.maze[tmp.x][tmp.y] == LIBRE)
-	{
-		situ copy = actu;
-		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_back(tmp);
-		res.push_front(copy);
-	}
+	decoupage(&actu, objectif, &tmp, &res);
 	// nord
 	tmp = courante;
 	tmp.y -= 1;
-	if (tmp == objectif)
-	{
-		situ copy = actu;
-		copy.path.push_back(tmp);
-		aff(copy.maze);
-		throw copy.path;
-	}
-	if (actu.maze[tmp.x][tmp.y] == LIBRE)
-	{
-		situ copy = actu;
-		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_back(tmp);
-		res.push_front(copy);
-	}
+	decoupage(&actu, objectif, &tmp, &res);
 	// ouest
 	tmp = courante;
 	tmp.x += 1;
-	if (tmp == objectif)
-	{
-		situ copy = actu;
-		copy.path.push_back(tmp);
-		aff(copy.maze);
-		throw copy.path;
-	}
-	if (actu.maze[tmp.x][tmp.y] == LIBRE)
-	{
-		situ copy = actu;
-		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_back(tmp);
-		res.push_front(copy);
-	}
+	decoupage(&actu, objectif, &tmp, &res);
 
 	return res;
 }

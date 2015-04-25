@@ -6,7 +6,7 @@
 /*   By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/04/25 13:41:00 by bgauci            #+#    #+#             */
-/*   Updated: 2015/04/25 15:45:35 by bgauci           ###   ########.fr       */
+/*   Updated: 2015/04/25 18:00:19 by bgauci           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <random>
 
 #include "main.hpp"
 #include "dlib.hpp"
@@ -106,19 +107,19 @@ int main(int argc, char **argv)
 
 		/* debut	utilisation		API */
 		std::list<Timestamp> list_res;
-		std::srand(atoi(argv[3]));
+		std::minstd_rand0 r(atoi(argv[3]));
 
 		for (int i = 0; i < nb_test; i++)
 		{
 			do {
-				x = std::rand() % maze.size();
-				y = std::rand() % maze[x].size();
+				x = r() % maze.size();
+				y = r() % maze[x].size();
 			} while (maze[x][y] == false);
 			coordonnee const debut(x, y);
     
 			do {
-				x = std::rand() % maze.size();
-				y = std::rand() % maze[x].size();
+				x = r() % maze.size();
+				y = r() % maze[x].size();
 			} while (maze[x][y] == false);
 			coordonnee const fin(x, y);
 

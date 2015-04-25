@@ -12,7 +12,7 @@ NOM = lib
 FLAG = -std=c++1y -Wall -Werror -Wextra
 
 ${NAME} : ${SRC_PATHFINDER}
-	g++ -o ${NAME} ${FLAG} ${SRC_PATHFINDER} -I${DIR_INC_PATHFINDER}
+	g++ -o ${NAME} ${FLAG} ${SRC_PATHFINDER} -I${DIR_INC_PATHFINDER} -ldl
 
 all : ${NAME}
 
@@ -28,7 +28,7 @@ maze :
 	ruby gen.rb > Maze/${NOM}.maze
 
 lib :
-	g++ -shared ${FLAG} -o ${NOM}.so ${DIR}/src/* -I${DIR}/inc -I${DIR_PATHFINDER}/inc
+	g++ -shared ${FLAG} -o ${NOM}.so ${DIR}/src/* -I${DIR}/inc -I${DIR_PATHFINDER}/inc -fPIC
 
 help :
 	@echo "regle all, PathFinder"

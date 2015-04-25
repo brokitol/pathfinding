@@ -21,7 +21,7 @@ class Timestamp
 	private :
 		int	sec = 0;
 		int	ms = 0;
-		int	μs = 0;
+		int	us = 0;
 
 	public :
 		Timestamp() {};

@@ -17,13 +17,13 @@ Timestamp::Timestamp(timeval actu)
 {
 	sec = actu.tv_sec;
 	ms = actu.tv_usec / 1000;
-	μs = actu.tv_usec - ms * 1000;
+	us = actu.tv_usec - ms * 1000;
 }
 
 std::string		Timestamp::to_string() const
 {
 	std::stringstream	ss;
-	ss << sec << "s, " << ms << "ms, " << μs << "μs";
+	ss << sec << "s, " << ms << "ms, " << us << "us";
 	return ss.str();
 }
 
@@ -31,10 +31,10 @@ Timestamp &		Timestamp::operator+(Timestamp const &x) const
 {
 	Timestamp *	res = new Timestamp();
 
-	res->μs = this->μs + x.μs;
+	res->us = this->us + x.us;
 	res->ms += this->ms + x.ms;
 	res->sec += this->sec + x.sec;
-	while (res->μs > 1000)	{res->μs -= 1000;res->ms += 1;}
+	while (res->us > 1000)	{res->us -= 1000;res->ms += 1;}
 	while (res->ms > 1000)	{res->ms -= 1000;res->sec += 1;}
 
 	return *res;
@@ -42,10 +42,10 @@ Timestamp &		Timestamp::operator+(Timestamp const &x) const
 
 Timestamp &		Timestamp::operator+=(Timestamp const &x)
 {
-	μs += x.μs;
+	us += x.us;
 	ms += x.ms;
 	sec += x.sec;
-	while (μs > 1000)	{μs -= 1000;ms += 1;}
+	while (us > 1000)	{us -= 1000;ms += 1;}
 	while (ms > 1000)	{ms -= 1000;sec += 1;}
 
 	return *this;
@@ -57,13 +57,13 @@ Timestamp &		Timestamp::operator-(Timestamp const &x) const
 
 	res->sec = this->sec - x.sec;
 	res->ms = this->ms - x.ms;
-	res->μs = this->μs - x.μs;
-	while (res->μs > 1000)						{res->μs -= 1000;res->ms += 1;}
+	res->us = this->us - x.us;
+	while (res->us > 1000)						{res->us -= 1000;res->ms += 1;}
 	while (res->ms > 1000)						{res->ms -= 1000;res->sec += 1;}
 	while (res->ms < 0 and res->sec > 0)	{res->ms += 1000;res->sec -= 1;}
 	while (res->ms > 0 and res->sec < 0)	{res->ms -= 1000;res->sec += 1;}
-	while (res->μs < 0 and res->ms > 0)		{res->μs += 1000;res->ms -= 1;}
-	while (res->μs > 0 and res->ms < 0)		{res->μs -= 1000;res->ms += 1;}
+	while (res->us < 0 and res->ms > 0)		{res->us += 1000;res->ms -= 1;}
+	while (res->us > 0 and res->ms < 0)		{res->us -= 1000;res->ms += 1;}
 
 	return *res;
 }
@@ -74,7 +74,7 @@ Timestamp &		Timestamp::operator/(int const &x) const
 
 	res->sec = this->sec / x;
 	res->ms = this->ms / x;
-	res->μs = this->μs / x;
+	res->us = this->us / x;
 	if (this->sec % x != 0)
 	{
 		int tmp = (this->sec % x)* 1000;
@@ -82,11 +82,11 @@ Timestamp &		Timestamp::operator/(int const &x) const
 		if (tmp % x != 0)
 		{
 			int tmp2 = (tmp % x) * 1000;
-			res->μs += tmp2 / x;
+			res->us += tmp2 / x;
 		}
 	}
 	if (this->ms % x != 0)
-		res->μs += ((this->ms % x) * 1000) / x;
+		res->us += ((this->ms % x) * 1000) / x;
 
 	return *res;
 }
@@ -97,8 +97,8 @@ bool			Timestamp::operator<(Timestamp const &x) const
 	else if (this->sec > x.sec) {return false;}
 	if (this->ms < x.ms) {return true;}
 	else if (this->ms > x.ms) {return false;}
-	if (this->μs < x.μs) {return true;}
-	else if (this->μs > x.μs) {return false;}
+	if (this->us < x.us) {return true;}
+	else if (this->us > x.us) {return false;}
 
 	return false;
 }
@@ -109,8 +109,8 @@ bool			Timestamp::operator>(Timestamp const &x) const
 	else if (this->sec < x.sec) {return false;}
 	if (this->ms > x.ms) {return true;}
 	else if (this->ms < x.ms) {return false;}
-	if (this->μs > x.μs) {return true;}
-	else if (this->μs < x.μs) {return false;}
+	if (this->us > x.us) {return true;}
+	else if (this->us < x.us) {return false;}
 
 	return false;
 }
@@ -119,7 +119,7 @@ bool			Timestamp::operator==(Timestamp const &x) const
 {
 	if (this->sec != x.sec) {return false;}
 	if (this->ms != x.ms) {return false;}
-	if (this->μs != x.μs) {return false;}
+	if (this->us != x.us) {return false;}
 
 	return true;
 }

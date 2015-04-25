@@ -15,7 +15,7 @@
 
 Dlib::Dlib(char * path)
 {
-	if((hndl = dlopen(path, RTLD_LOCAL)) == NULL)
+	if((hndl = dlopen(path, RTLD_LAZY)) == NULL)
 		throw new Exception(std::string("constructeur Dlib : ") + dlerror());
 }
 Dlib::~Dlib() {dlclose(hndl);}

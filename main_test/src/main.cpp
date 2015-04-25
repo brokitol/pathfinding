@@ -1,24 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2015/04/25 13:41:00 by bgauci            #+#    #+#             */
+/*   Updated: 2015/04/25 14:45:26 by bgauci           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <dlfcn.h>
 
 #include "main.hpp"
+#include "dlib.hpp"
+#include "timestamp.hpp"
 #include <sys/time.h>
 
 void	aff_time(int t);
 
-int main(int argc, char **argv)
+void init_maze2D(std::vector< std::vector< bool > > *maze, std::ifstream *f)
 {
-	std::ifstream f;
-
-	if (argc < 5)
-		std::cout << "usage : " << argv[0] << " maze nb_test rand_seed lib {lib}" << std::endl;
-	std::vector< std::vector< bool > > maze;
-
-	f.open (argv[1], std::ifstream::in);
-	for (std::string s; getline(f,s);)
+	for (std::string s; getline(*f,s);)
 	{
 		std::vector<bool>	tmp;
 		for (char c : s)
@@ -28,47 +34,60 @@ int main(int argc, char **argv)
 			else
 				tmp.push_back(false);
 		}
-		maze.push_back(tmp);
+		maze->push_back(tmp);
 	}
+}
+
+int main(int argc, char **argv)
+{
+	std::ifstream	f;
+	Dlib *			chargeur_lib;
+
+	if (argc < 5)
+	{
+		std::cout << "usage : " << argv[0] << " maze nb_test rand_seed lib {lib}" << std::endl;
+		exit(0);
+	}
+	std::vector< std::vector< bool > > maze;
+
+	f.open (argv[1], std::ifstream::in);
+	init_maze2D(&maze, &f);
 
 	int	nb_test = atoi(argv[2]);
 	for (int i = 4 ; i < argc ; i++)
 	{
-		void *	hndl = NULL;
+		API *(*pmaker)(labi2D);
 		API *	pathfinder = NULL;
-		void *	mkr = NULL;
 		int		x = 0;
 		int		y = 0;
-
-		/* debut	chargement		API */
-		API *(*pmaker)(labi2D);
-
-		if((hndl = dlopen(argv[i], RTLD_LOCAL)) == NULL)
-		{
-			std::cerr << "erreur de chargement de la lib (dlopen): " << dlerror() << std::endl;
-			continue;
-		}
-
-		if ((mkr = dlsym(hndl, "create_pathfinder2D")) == NULL)
-		{
-			std::cerr << "erreur d'initialisation de la lib (dlsym): "<< dlerror() << std::endl;
-			dlclose(hndl);
-			continue;
-		}
-		pmaker = reinterpret_cast<API *(*)(labi2D)>(mkr);
-		pathfinder = pmaker(maze);
-		/* fin		chargement		API */
-
-
-		/* debut	utilisation		API */
 		timeval	avant;
 		timeval	apres;
-		std::list<int> list_res;
 
+		/* debut	chargement		API */
+		try
+		{
+			chargeur_lib = new Dlib(argv[i]);
+			pmaker = chargeur_lib->get_create_pathfinder2D();
+		}
+		catch (Exception *e)
+		{
+			std::cerr << "exception : " << e->what() << std::endl;
+			continue;
+		}
+
+		gettimeofday(&avant, NULL);
+		pathfinder = pmaker(maze);
+		gettimeofday(&apres, NULL);
+
+		std::cout << "temps d'initialisation de lib : " << Timestamp(apres) - Timestamp(avant) << std::endl; 
+		/* fin		chargement		API */
+
+		/* debut	utilisation		API */
+		std::list<Timestamp> list_res;
+		std::srand(atoi(argv[3]));
 
 		for (int i = 0; i < nb_test; i++)
 		{
-			std::srand(atoi(argv[3]));
 			do {
 				x = std::rand() % maze.size();
 				y = std::rand() % maze[x].size();
@@ -85,52 +104,27 @@ int main(int argc, char **argv)
 			auto v = pathfinder->get_path(debut, fin);
 			gettimeofday(&apres, NULL);
 
-			int res = (apres.tv_sec - avant.tv_sec) * 1000000;
-			res += apres.tv_usec - avant.tv_usec;
-			list_res.push_front(res);
+			auto tmp = Timestamp(apres) - Timestamp(avant);
+			list_res.push_front(tmp);
 
-			int	sec;
-			int mili;
-			int micro;
-	
-			int tmp = apres.tv_usec - avant.tv_usec;
-			sec = apres.tv_sec - avant.tv_sec;
-			if (tmp < 0)
-			{
-				sec--;
-				tmp += 1000000;
-			}
-			mili = tmp / 1000;
-			micro = tmp - mili * 1000;
-
-			std::cout << "test " << i << " :	temps mis : " << sec << "s,	" << mili << "ms,	" << micro << "μs" << std::endl;
+			std::cout << "test " << i << " :	temps mis : " << tmp << std::endl;
 		}	
-		int total = 0;
-		int min = 0;
-		int max = 0;
-		for (int i : list_res)
+		Timestamp total;
+		Timestamp min;
+		Timestamp max;
+		for (auto i : list_res)
 		{
 			max = (i > max) ? i : max;
-			min = (i < min || min == 0) ? i : min;
+			min = (i < min || min == Timestamp()) ? i : min;
 			total += i;
 		}
-		std::cout << "moyenne des appels :	" ; aff_time(total/list_res.size()) ; std::cout << std::endl;
-		std::cout << "le plus rapide :    	" ; aff_time(min) ; std::cout << std::endl;
-		std::cout << "le plus lent :      	" ; aff_time(max) ; std::cout << std::endl;
+		std::cout << "moyenne des appels :	" << total/list_res.size() << std::endl;
+		std::cout << "le plus rapide :    	" << min << std::endl;
+		std::cout << "le plus lent :      	" << max << std::endl;
 
 		/* debut	dechargement	API */
 		delete pathfinder;
-		dlclose(hndl);
+		delete chargeur_lib;
 		/* fin		dechargement	API */
 	}
-}
-
-void	aff_time(int t)
-{
-	int sec = t / 1000000;
-	t -= sec;
-	int mili = t / 1000;
-	t -= mili * 1000;
-	int micro = t;
-	std::cout << sec << "s,	" << mili << "ms,	" << micro << "μs";
 }

@@ -1,10 +1,14 @@
+#ifndef MDARTY_API
+#define MDARTY_API
+
 #include "API.hpp"
 
-class Test_API : public API
+class Mdarty_API : public API
 {
 	public :
-		Test_API(labi2D maze);
-		Test_API(labi3D maze);
-		~Test_API();
+		Mdarty_API();
+		~Mdarty_API();
 		std::list<coordonnee>		get_path(coordonnee depart, coordonnee objectif);
 };
+
+#endif

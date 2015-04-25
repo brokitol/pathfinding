@@ -28,7 +28,7 @@ std::list<coordonnee>		Dijkstra_Simple::get_path(coordonnee depart, coordonnee o
 	std::list<situ> suite;
 
 	situ tmp;
-	tmp.path.push_back(depart);
+	tmp.path.push_front(depart);
 	tmp.maze = this->maze;
 	tmp.maze[depart.x][depart.y] = FAIT;
 	lst.push_back(tmp);
@@ -54,7 +54,7 @@ std::list<coordonnee>		Dijkstra_Simple::get_path(coordonnee depart, coordonnee o
 std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 {
 	std::list<situ>	res;
-	coordonnee courante = actu.path.front();
+	coordonnee courante = actu.path.back();
 
 	// sud
 	coordonnee tmp = courante;
@@ -62,7 +62,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	if (tmp == objectif)
 	{
 		situ copy = actu;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		aff(copy.maze);
 		throw copy.path;
 	}
@@ -70,7 +70,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		res.push_front(copy);
 	}
 
@@ -80,7 +80,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	if (tmp == objectif)
 	{
 		situ copy = actu;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		aff(copy.maze);
 		throw copy.path;
 	}
@@ -88,7 +88,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		res.push_front(copy);
 	}
 	// nord
@@ -97,7 +97,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	if (tmp == objectif)
 	{
 		situ copy = actu;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		aff(copy.maze);
 		throw copy.path;
 	}
@@ -105,7 +105,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		res.push_front(copy);
 	}
 	// ouest
@@ -114,7 +114,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	if (tmp == objectif)
 	{
 		situ copy = actu;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		aff(copy.maze);
 		throw copy.path;
 	}
@@ -122,7 +122,7 @@ std::list<situ>				Dijkstra_Simple::fonc(const situ actu, coordonnee objectif)
 	{
 		situ copy = actu;
 		copy.maze[tmp.x][tmp.y] = FAIT;
-		copy.path.push_front(tmp);
+		copy.path.push_back(tmp);
 		res.push_front(copy);
 	}
 

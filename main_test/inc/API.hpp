@@ -6,7 +6,7 @@
 /*   By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/04/25 13:40:36 by bgauci            #+#    #+#             */
-/*   Updated: 2015/04/25 13:40:40 by bgauci           ###   ########.fr       */
+/*   Updated: 2015/04/25 15:18:54 by bgauci           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ struct coordonnee
 	unsigned int z = 0;
 
 	coordonnee(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0): x(x), y(y), z(z) {};
-	bool	operator==(const coordonnee & val) {return (this->x == val.x && this->y == val.y) ? true : false;}
+	bool	operator==(const coordonnee & val) const {return (this->x == val.x and this->y == val.y) ? true : false;}
+	bool	operator!=(const coordonnee & val) const {return (this->x != val.x or this->y != val.y) ? true : false;}
 };
 
 enum Element {LIBRE, MUR, ESCALIER};

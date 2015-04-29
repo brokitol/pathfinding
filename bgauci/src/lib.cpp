@@ -17,7 +17,6 @@ Dijkstra_Simple::Dijkstra_Simple(labi2D maze)
 				this->maze[i][j] = BLOCK;
 		}
 	}
-//	aff(this->maze);
 }
 
 Dijkstra_Simple::~Dijkstra_Simple() {}

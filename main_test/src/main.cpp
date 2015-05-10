@@ -6,13 +6,14 @@
 /*   By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/04/25 13:41:00 by bgauci            #+#    #+#             */
-/*   Updated: 2015/04/25 18:00:19 by bgauci           ###   ########.fr       */
+/*   Updated: 2015/05/10 18:15:17 by bgauci           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <random>
 
@@ -50,9 +51,9 @@ bool verif_path(std::list<coordonnee> const path, coordonnee const debut, coordo
 	b++;
 	while (a != path.end() and b != path.end())
 	{
-		if (maze[a->x][a->y] == false) {error_path = "point a invalide";return false;}
-		if (maze[b->x][b->y] == false) {error_path = "point b invalide";return false;}
-		if ((a->x != b->x and a->y != b->y) or ((a->x != b->x or a->y != b->y) and a->z != b->z)) {error_path = "passage entre a et b impossible";return false;}
+		if (maze[a->x][a->y] == false) {std::stringstream ss; ss << "point a("<<a->x<<","<<a->y<<") invalide";error_path = ss.str();return false;}
+		if (maze[b->x][b->y] == false) {std::stringstream ss; ss << "point b("<<b->x<<","<<b->y<<") invalide";error_path = ss.str();return false;}
+		if ((a->x != b->x and a->y != b->y) or ((a->x != b->x or a->y != b->y) and a->z != b->z)) {std::stringstream ss; ss << "passage entre a("<<a->x<<","<<a->y<<") et b("<<b->x<<","<<b->y<<") impossible  invalide";error_path = ss.str();return false;}
 		a++;
 		b++;
 	}

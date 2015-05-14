@@ -85,6 +85,8 @@ namespace micropather
 	{
 		void* state;			///< The state as a void*
 		float cost;				///< The cost to the state. Use FLT_MAX for infinite cost.
+
+		StateCost(void * s = 0, float c = 0) : state(s), cost(c) {}
 	};
 
 

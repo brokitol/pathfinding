@@ -6,7 +6,7 @@
 /*   By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/04/25 13:41:00 by bgauci            #+#    #+#             */
-/*   Updated: 2015/05/10 18:15:17 by bgauci           ###   ########.fr       */
+/*   Updated: 2015/05/12 18:54:03 by bgauci           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,139 +20,101 @@
 #include "main.hpp"
 #include "dlib.hpp"
 #include "timestamp.hpp"
+#include "chargement_verif.hpp"
 #include <sys/time.h>
-
-std::string error_path;
-
-void	aff_time(int t);
-
-void init_maze2D(std::vector< std::vector< bool > > *maze, std::ifstream *f)
-{
-	for (std::string s; getline(*f,s);)
-	{
-		std::vector<bool>	tmp;
-		for (char c : s)
-		{
-			if (c == ' ')
-				tmp.push_back(true);
-			else
-				tmp.push_back(false);
-		}
-		maze->push_back(tmp);
-	}
-}
-
-bool verif_path(std::list<coordonnee> const path, coordonnee const debut, coordonnee const fin, std::vector< std::vector< bool > > const maze)
-{
-	if (path.front() != debut) {error_path = "point de depart invalide";return false;}
-	if (path.back() != fin) {error_path = "point de fin invalide";return false;}
-	auto a = path.begin();
-	auto b = path.begin();
-	b++;
-	while (a != path.end() and b != path.end())
-	{
-		if (maze[a->x][a->y] == false) {std::stringstream ss; ss << "point a("<<a->x<<","<<a->y<<") invalide";error_path = ss.str();return false;}
-		if (maze[b->x][b->y] == false) {std::stringstream ss; ss << "point b("<<b->x<<","<<b->y<<") invalide";error_path = ss.str();return false;}
-		if ((a->x != b->x and a->y != b->y) or ((a->x != b->x or a->y != b->y) and a->z != b->z)) {std::stringstream ss; ss << "passage entre a("<<a->x<<","<<a->y<<") et b("<<b->x<<","<<b->y<<") impossible  invalide";error_path = ss.str();return false;}
-		a++;
-		b++;
-	}
-	if (path.size() > 2)
-		return true;
-	return false;
-}
 
 int main(int argc, char **argv)
 {
-	std::ifstream	f;
-	Dlib *			chargeur_lib;
+	if (argc < 5)	{std::cout << "usage : " << argv[0] << " lib nb_test rand_seed maze_dir/*" << std::endl;exit(0);}
 
-	if (argc < 5)
+	Dlib *								chargeur_lib;
+	timeval								avant, apres;
+	labi3D								maze3D;
+	API *								pathfinder = NULL;
+	API *(*pmaker)(labi3D);
+	int									nb_test = atoi(argv[2]), x = 0, y = 0, z = 0;
+	std::list<Timestamp>				list_res;
+	std::minstd_rand0					r(atoi(argv[3]));
+
+	init_maze3D(&maze3D, argv, argc);
+
+/*
+	int a = 0, b = 0, c = 0;
+	for (auto it : maze3D)
 	{
-		std::cout << "usage : " << argv[0] << " maze nb_test rand_seed lib {lib}" << std::endl;
-		exit(0);
-	}
-	std::vector< std::vector< bool > > maze;
+		b = 0;
+		for (auto o : it)
+		{
+			c = 0;
+			for (auto t : o)
+			{
+				if (t == ESCALIER) {std::cout << "a:" << a << " b:" << b << " c:" << c << std::endl;}
+				switch (t)
+				{
+					case LIBRE : std::cout << " ";		break;
+					case MUR : std::cout << "X";		break;
+					case ESCALIER : std::cout << "E";	break;
+					default : std::cout << "?";
+				}
+				c++;
+			}
+//			std::cout << std::endl;
+			b++;
+		}
+		a++;
+//		std::cout << std::endl;
+//		std::cout << std::endl;
+	}//*/
 
-	f.open (argv[1], std::ifstream::in);
-	init_maze2D(&maze, &f);
+	/* debut	chargement		API */
+	try	{chargeur_lib = new Dlib(argv[1]); pmaker = chargeur_lib->get_create_pathfinder3D();}
+	catch (Exception *e) {std::cerr << "exception : " << e->what() << std::endl; exit(0);}
 
-	int	nb_test = atoi(argv[2]);
-	for (int i = 4 ; i < argc ; i++)
+	gettimeofday(&avant, NULL);
+	pathfinder = pmaker(maze3D);
+	gettimeofday(&apres, NULL);
+
+	std::cout << "temps d'initialisation de lib : " << Timestamp(apres) - Timestamp(avant) << std::endl; 
+	/* fin		chargement		API */
+
+	/* debut	utilisation		API */
+	for (int i = 0; i < nb_test; i++)
 	{
-		API *(*pmaker)(labi2D);
-		API *	pathfinder = NULL;
-		int		x = 0;
-		int		y = 0;
-		timeval	avant;
-		timeval	apres;
+		int max_z = maze3D.size();
+		int max_y = maze3D[0].size();
+		int max_x = maze3D[0][0].size();
 
-		/* debut	chargement		API */
-		try
-		{
-			chargeur_lib = new Dlib(argv[i]);
-			pmaker = chargeur_lib->get_create_pathfinder2D();
-		}
-		catch (Exception *e)
-		{
-			std::cerr << "exception : " << e->what() << std::endl;
-			continue;
-		}
+		do {
+			x = r() % max_x;
+			y = r() % max_y;
+			z = r() % max_z;
+		} while (maze3D[z][y][x] == MUR);
+		coordonnee const debut(x, y, z);
+    
+		do {
+			x = r() % max_x;
+			y = r() % max_y;
+			z = r() % max_z;
+		} while (maze3D[z][y][x] == MUR);
+		coordonnee const fin(x, y, z);
 
+	//	std::cout << "debut [" << debut.x << ", " << debut.y << ", " << debut.z << "] obj [" << fin.x << ", " << fin.y << ", " << fin.z << "]" << std::endl;
 		gettimeofday(&avant, NULL);
-		pathfinder = pmaker(maze);
+		auto v = pathfinder->get_path(debut, fin);
 		gettimeofday(&apres, NULL);
 
-		std::cout << "temps d'initialisation de lib : " << Timestamp(apres) - Timestamp(avant) << std::endl; 
-		/* fin		chargement		API */
+		auto tmp = Timestamp(apres) - Timestamp(avant);
+		list_res.push_front(tmp);
 
-		/* debut	utilisation		API */
-		std::list<Timestamp> list_res;
-		std::minstd_rand0 r(atoi(argv[3]));
-
-		for (int i = 0; i < nb_test; i++)
-		{
-			do {
-				x = r() % maze.size();
-				y = r() % maze[x].size();
-			} while (maze[x][y] == false);
-			coordonnee const debut(x, y);
-    
-			do {
-				x = r() % maze.size();
-				y = r() % maze[x].size();
-			} while (maze[x][y] == false);
-			coordonnee const fin(x, y);
-
-			gettimeofday(&avant, NULL);
-			auto v = pathfinder->get_path(debut, fin);
-			gettimeofday(&apres, NULL);
-
-
-			auto tmp = Timestamp(apres) - Timestamp(avant);
-			list_res.push_front(tmp);
-
-			std::cout << "test " << i << " :	temps mis : " << tmp;
-			if (verif_path(v, debut, fin, maze) == false)
-				std::cout << "\033[1;31m path invalide : " << error_path << "\033[0;m" ;
-			std::cout << std::endl;
-		}	
-		Timestamp total;
-		Timestamp min;
-		Timestamp max;
-		for (auto i : list_res)
-		{
-			max = (i > max) ? i : max;
-			min = (i < min || min == Timestamp()) ? i : min;
-			total += i;
-		}
-		std::cout << std::endl << "moyenne des appels :	" << total/list_res.size() << std::endl;
-		std::cout << "le plus rapide :    	" << min << std::endl;
-		std::cout << "le plus lent :      	" << max << std::endl;
-
-		/* debut	dechargement	API */
-		delete pathfinder;
-		delete chargeur_lib;
-		/* fin		dechargement	API */
+		std::cout << "test " << i << " :	nb_step : " << v.size() << "	temps mis : " << tmp;
+		if (verif_path3D(v, debut, fin, maze3D) == false)
+			std::cout << "\033[1;31m path invalide : " << error_path << "\033[0;m" ;
+		std::cout << std::endl;
 	}
+	stat(list_res);
+
+	/* debut	dechargement	API */
+	delete pathfinder;
+	delete chargeur_lib;
+	/* fin		dechargement	API */
 }
